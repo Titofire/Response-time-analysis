@@ -4,8 +4,7 @@
  -      #load packages#
 
         library("tidyverse")
-        library("rmarkdown")
-
+       
 ####   Import data and remove non-essential fields/variables ####
 
                 Pivot_Table_2016_2021.df <- read.csv(file = "pivot20162021.csv",header = TRUE, na.strings=c("", "NA"),sep = ",")
@@ -29,9 +28,14 @@
                        filter(number %in% c("1510","1530"), street %in% c("Williston"), unit_desc %in% c("Ladder 1"))
                         summary(Gazebo_ladder1.df$resp)
                         
-                        qplot(Gazebo_ladder1.df$resp)
+                        hist(Gazebo_ladder1.df$resp, breaks = 15, main = "Ladder 1 respones to 1510 / 1530 Williston rd",xlab = "Seconds")
+                        abline(v=c(mean(Gazebo_ladder1.df$resp),median(Gazebo_ladder1.df$resp)),lty=c(2,3),lwd=2)
+                        legend("topright",legend = c("mean","median"),lty=c(2,3),lwd = 2)
+                       
                         boxplot(Gazebo_ladder1.df$resp,main="Ladder 1 response to 1510 or 1530 Williston rd.",xlab = "", ylab = "Seconds")
-                
+                        abline(h=c(300),col="red",lty=4, lwd=2)
+                        
+                        
                 ## 1510 and 1530 Williston Rd., Engine2 responses (Gazebo_engine2.df) ##
                 
                 Gazebo_engine2.df <- Frequent_healthcare.df %>% 
