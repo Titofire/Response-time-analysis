@@ -2,61 +2,304 @@
 title: "Response by Station"
 author: "T. Poole"
 date: '2022-05-06'
-output: html_document
+output: 
+  html_document:
+          code_fold: hide
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
+## SBFD Response Time Analysis of 5 Residental Occupancies
 
-## SBFD Response Time Analysis of 5 Residental Occupancys
+This is a look at response time for by Ladder 1 and Engine 2 to six
+occupancies. Data was queried from our records management system for six
+years between 2021 and 2016. Two separate queries where constructed that
+resulted in "pivot20162021.csv" and "unitresp20102021.csv". Those files
+were joined into a dataframe called "Left_joinedpivotresp.df".
 
-This is a look at response time for by Ladder 1 and Engine 2 to six frequent
-occupancys. 
+Columns extracted from that dataframe were incident number, address
+data, station, apparatus responding and response time in seconds. Those
+columns were then filtered for all calls for 90 Allen road, 20
+Harborview, 310 Market, 1510/1530 Williston Rd and 465 Quarry Hill,
+resulting in 3301 rows of the six variables. A summary of reponses to
+each address by Ladder 1 and Engine 2 are broken out below.
 
+*Responses by Engine 1 and Engine 3 are omitted due to contaminated
+data.*
 
 ```{r,echo=FALSE,include=FALSE}
+
+#### Load Librarys ####
+
 library(tidyverse)
-```
 
-```{r}
-## Load Data from csv and create data frames#
+#### Load Data from csv and create data frames#
 
-####   Import data and remove non-essential fields/variables ####
+    ##   Import data and remove non-essential fields/variables ####
 
-                Pivot_Table_2016_2021.df <- read.csv(file = "pivot20162021.csv",header = TRUE, na.strings=c("", "NA"),sep = ",")
-                Unitresp20102021.df <- read.csv(file = "unitresp20102021.csv",header = TRUE, na.strings=c("", "NA"),sep = ",")
+Pivot_Table_2016_2021.df <- read.csv(file = "pivot20162021.csv",header = TRUE, na.strings=c("", "NA"),sep = ",")
+Unitresp20102021.df <- read.csv(file = "unitresp20102021.csv",header = TRUE, na.strings=c("", "NA"),sep = ",")
         
                 ## Left join both df above ##
                 
-                        Left_joinedpivotresp.df <- left_join(Pivot_Table_2016_2021.df,Unitresp20102021.df, by = "inci_no")
+Left_joinedpivotresp.df <- left_join(Pivot_Table_2016_2021.df,Unitresp20102021.df, by = "inci_no")
                         
-####   Build new data frame and filter for 465 Quarryhill, 90 Allen road, 1510-1530 Williston, 20 Harborview ####
+####   Build new data frame and filter for 465 Quarry Hill, 90 Allen road, 1510-1530 Williston, 20 Harborview, 310 Market ####
         
                 Frequent_healthcare.df <- Left_joinedpivotresp.df %>%
                         select(inci_no,station,number,street,resp,unit_desc) %>%
-                        filter(number %in% c("90","20","1510","465","310","1530"),street %in% c("Williston","Quarryhill", "Allen", "Anderson","Harborview","Market"))
+                        filter(number %in% c("90","1510","465","1530","62","118","192"),street %in% c("Williston","Quarry Hill","Quarry Hill Road", "Allen", "Tilley", "Tilley Drive"))
                 
 ```
 
+## 1510 and 1530 Williston Road
+
+These two occupancies represent the first "address" we will look at. The
+six number summary below gives an overview of 189 Ladder One responses.
+The min. value is zero seconds, signifying that at least once the ladder
+was on scene when a second call was received to that address. The first
+quartile or 25% of the calls were equal or less than 300 seconds. The
+Median represents exactly half way point of the data, 50% of the
+responses were above that time and 50% were below. The Mean is the
+average time for the counted responses. The "3rd Qu." or third quartile
+is where 75% of the calls reside at 7 minutes (420 seconds) or below.
+
+#### Ladder One summary (189 calls)
 
 ```{r}
-  ## 1510 and 1530 Williston Rd., Ladder1 responses (Gazebo_ladder1.df) ##
-                
-                Gazebo_ladder1.df <- Frequent_healthcare.df %>% 
+Gazebo_ladder1.df <- Frequent_healthcare.df %>% 
                        filter(number %in% c("1510","1530"), street %in% c("Williston"), unit_desc %in% c("Ladder 1"))
                         summary(Gazebo_ladder1.df$resp)
-                        
-                        hist(Gazebo_ladder1.df$resp, breaks = 15, main = "Ladder 1 respones to 1510 / 1530 Williston rd",xlab = "Seconds")
-                        abline(v=c(mean(Gazebo_ladder1.df$resp),median(Gazebo_ladder1.df$resp)),lty=c(2,3),lwd=2)
-                        legend("topright",legend = c("mean","median"),lty=c(2,3),lwd = 2)
-                       
-                        boxplot(Gazebo_ladder1.df$resp,main="Ladder 1 response to 1510 or 1530 Williston rd.",xlab = "", ylab = "Seconds")
-                        abline(h=c(300),col="red",lty=4, lwd=2)
-                        
-                        
-                ## 1510 and 1530 Williston Rd., Engine2 responses (Gazebo_engine2.df) ##
-                
-                Gazebo_engine2.df <- Frequent_healthcare.df %>% 
-                        filter(number %in% c("1510","1530"), street %in% c("Williston"), unit_desc %in% c("Engine 2"))
-                        summary(Gazebo_engine2.df$resp)
-                
 ```
 
+#### Engine 2 summary (39 calls)
+
+```{r}
+Gazebo_engine2.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("1510","1530"), street %in% c("Williston"), unit_desc %in% c("Engine 2"))
+                        summary(Gazebo_engine2.df$resp)
+```
+
+#### Visuals of The Data
+
+The red dashed line is NFPA 1710, the dotdashed lines show the median
+and the black dashed lines illustrate the mean values.
+
+```{r, figures-Gazebo, fig.show="hold", out.width="50%"}
+Gazebo_ladder1.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 Response to 1510/1530 Williston rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Gazebo_ladder1.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Gazebo_ladder1.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+Gazebo_engine2.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                
+                                ggtitle("Engine 2 Response to 1510/1530 Williston rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Gazebo_engine2.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Gazebo_engine2.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+                       
+                              
+```
+
+## 465 Quarry Hill Road
+
+#### Ladder 1 summary (223 calls)
+
+```{r}
+Quarry_ladder1.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("465"), street %in% c("Quarry Hill","Quarry Hill Road"), unit_desc %in% c("Ladder 1"))
+                        summary(Quarry_ladder1.df$resp)
+```
+
+#### Engine 2 summary (64 calls)
+
+```{r}
+Quarry_engine2.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("465"), street %in% c("Quarry Hill","Quarry Hill Road"), unit_desc %in% c("Engine 2"))
+                        summary(Quarry_engine2.df$resp)
+```
+
+```{r, figures-Quarry, fig.show="hold", out.width="50%"}
+Quarry_ladder1.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 response to 465 Quarry Hill rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Quarry_ladder1.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Quarry_ladder1.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+Quarry_engine2.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                
+                                ggtitle("Engine 2 Response to 465 Quarry Hill rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Quarry_engine2.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Quarry_engine2.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+                       
+                              
+```
+
+## 90 Allen Road
+
+#### Ladder 1 summary (14 calls)
+
+```{r}
+Allen_ladder1.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("90"), street %in% c("Allen"), unit_desc %in% c("Ladder 1"))
+                        summary(Allen_ladder1.df$resp)
+```
+
+#### Engine 2 summary (432 calls)
+
+```{r}
+Allen_engine2.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("90"), street %in% c("Allen"), unit_desc %in% c("Engine 2"))
+                        summary(Allen_engine2.df$resp)
+```
+
+```{r, figures-Allen, fig.show="hold", out.width="50%"}
+Allen_ladder1.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 response to 90 Allen rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Allen_ladder1.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Allen_ladder1.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+Allen_engine2.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                
+                                ggtitle("Engine 2 Response to 90 Allen rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Allen_engine2.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Allen_engine2.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+                       
+                       
+```
+
+```{r}
+Tilley_ladder1.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("118","62","192"), street %in% c("Tilley", "Tilley Drive"), unit_desc %in% c("Ladder 1"))
+                        summary(Tilley_ladder1.df$resp)
+```
+
+```{r}
+Tilley_engine2.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("118","62","192"), street %in% c("Tilley", "Tilley Drive"), unit_desc %in% c("Engine 2"))
+                        summary(Tilley_engine2.df$resp)
+```
+
+```{r, figures-Tilley, fig.show="hold", out.width="50%"}
+Tilley_ladder1.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 response to Tilley Dr addresses") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Tilley_ladder1.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Tilley_ladder1.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+Tilley_engine2.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                
+                                ggtitle("Engine 2 Response to Tilley Dr addresses") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Tilley_engine2.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Tilley_engine2.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")
+
+```
+
+# NFPA 1710 2020 edition
+
+### 3.3.44.1 Advanced Life Support (ALS).
+
+Emergency medical treatment beyond basic life support that provides for
+advanced airway management including intubation, advanced cardiac
+monitoring, defibrillation, establishment and maintenance of intravenous
+access, and drug therapy.
+
+### 3.3.44.2 \* Basic Life Support (BLS).
+
+A specific level of pre¬hospital medical care provided by trained
+responders, focused on rapidly evaluating a patient's condition;
+maintaining a patient's airway, breathing, and circulation; controlling
+external bleeding; preventing shock; and preventing further injury or
+disability by immobilizing potential spinal or other bone fractures.
+
+### 3.3.64.7 Travel Time.
+
+The time interval that begins when a unit is en route to the emergency
+incident and ends when the unit arrives at the scene.
+
+### 3.3.64.8 Turnout Time.
+
+The time interval that begins when the emergency response facilities
+(ERFs) and emergency response units (ERUs) notification process begins
+by either an audible alarm or visual annunciation or both and ends at
+the beginning point of travel time.
+
+### 4.1.2.1 The fire department shall establish the following performance objectives for the first-due response zones that are identified by the AHJ:
+
+1.  Alarm handling time completion in accordance with 4.1.2.3
+
+2.  80 seconds turnout time for fire and special operations response and
+    60 seconds turnout time for EMS response
+
+3.  \*240 seconds or less travel time for the arrival of the first
+    engine company at a fire suppression incident
+
+4.  360 seconds or less travel time for the arrival of the second
+    company with a minimum staffing of 4 personnel at a fire suppression
+    incident
+
+5.  For other than high-rise, 480 seconds or less travel time for the
+    deployment of an initial full alarm assignment at a fire suppression
+    incident
+
+6.  For high-rise, 610 seconds or less travel time for the deployment of
+    an initial full alarm assignment at a fire suppression incident
+
+7.  240 seconds or less travel time for the arrival of a unit with first
+    responder with automatic external defibrillator (AED) or
+    higher-level capability at an emergency medical incident
+
+8.  480 seconds or less travel time for the arrival of an advanced life
+    support (ALS) unit at an emergency medical incident, where this
+    service is provided by the fire department provided a first
+    responder with an AED or basic life support (BLS) unit arrived in
+    240 seconds or less travel time
