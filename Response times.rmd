@@ -89,7 +89,7 @@ and the black dashed lines illustrate the mean values.
 ```{r, figures-Gazebo, fig.show="hold", out.width="50%"}
 Gazebo_ladder1.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="5", color="8", alpha=0.7, bw=30) +
                                 ggtitle("Ladder 1 Response to 1510/1530 Williston rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Gazebo_ladder1.df$resp), linetype ="dashed", size = .5) + 
@@ -100,7 +100,7 @@ Gazebo_ladder1.df %>%
 
 Gazebo_engine2.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="2", color="6", alpha=0.7, bw=30) +
                                 
                                 ggtitle("Engine 2 Response to 1510/1530 Williston rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
@@ -135,7 +135,7 @@ Quarry_engine2.df <- Frequent_healthcare.df %>%
 ```{r, figures-Quarry, fig.show="hold", out.width="50%"}
 Quarry_ladder1.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="7", color="3", alpha=0.7, bw=30) +
                                 ggtitle("Ladder 1 response to 465 Quarry Hill rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Quarry_ladder1.df$resp), linetype ="dashed", size = .5) + 
@@ -146,9 +146,9 @@ Quarry_ladder1.df %>%
 
 Quarry_engine2.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="4", color="9", alpha=0.7, bw=30) +
                                 
-                                ggtitle("Engine 2 Response to 465 Quarry Hill rd.") +
+                                ggtitle("Engine 2 response to 465 Quarry Hill rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Quarry_engine2.df$resp), linetype ="dashed", size = .5) + 
                                 geom_vline(xintercept = median(Quarry_engine2.df$resp), linetype ="dotdash", size = .75) + 
@@ -181,7 +181,7 @@ Allen_engine2.df <- Frequent_healthcare.df %>%
 ```{r, figures-Allen, fig.show="hold", out.width="50%"}
 Allen_ladder1.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="8", color="16", alpha=0.7, bw=30) +
                                 ggtitle("Ladder 1 response to 90 Allen rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Allen_ladder1.df$resp), linetype ="dashed", size = .5) + 
@@ -194,7 +194,7 @@ Allen_engine2.df %>%
                                 ggplot(aes(resp)) +
                                 geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
                                 
-                                ggtitle("Engine 2 Response to 90 Allen rd.") +
+                                ggtitle("Engine 2 response to 90 Allen rd.") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Allen_engine2.df$resp), linetype ="dashed", size = .5) + 
                                 geom_vline(xintercept = median(Allen_engine2.df$resp), linetype ="dotdash", size = .75) + 
@@ -206,12 +206,15 @@ Allen_engine2.df %>%
                        
 ```
 
+## 62, 192, and 118 Tilley Drive
+
+#### Ladder 1 response to Tilley Drive (120 calls)
 ```{r}
 Tilley_ladder1.df <- Frequent_healthcare.df %>% 
                        filter(number %in% c("118","62","192"), street %in% c("Tilley", "Tilley Drive"), unit_desc %in% c("Ladder 1"))
                         summary(Tilley_ladder1.df$resp)
 ```
-
+#### Engine 2 response to Tilley Drive (33 calls)
 ```{r}
 Tilley_engine2.df <- Frequent_healthcare.df %>% 
                        filter(number %in% c("118","62","192"), street %in% c("Tilley", "Tilley Drive"), unit_desc %in% c("Engine 2"))
@@ -221,8 +224,8 @@ Tilley_engine2.df <- Frequent_healthcare.df %>%
 ```{r, figures-Tilley, fig.show="hold", out.width="50%"}
 Tilley_ladder1.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
-                                ggtitle("Ladder 1 response to Tilley Dr addresses") +
+                                geom_density(fill="6", color="3", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 response to Tilley dr addresses") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Tilley_ladder1.df$resp), linetype ="dashed", size = .5) + 
                                 geom_vline(xintercept = median(Tilley_ladder1.df$resp), linetype ="dotdash", size = .75) + 
@@ -232,9 +235,9 @@ Tilley_ladder1.df %>%
 
 Tilley_engine2.df %>%
                                 ggplot(aes(resp)) +
-                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                geom_density(fill="2", color="9", alpha=0.7, bw=30) +
                                 
-                                ggtitle("Engine 2 Response to Tilley Dr addresses") +
+                                ggtitle("Engine 2 response to Tilley dr addresses") +
                                 geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
                                 geom_vline(xintercept = mean(Tilley_engine2.df$resp), linetype ="dashed", size = .5) + 
                                 geom_vline(xintercept = median(Tilley_engine2.df$resp), linetype ="dotdash", size = .75) + 
@@ -244,7 +247,7 @@ Tilley_engine2.df %>%
 
 ```
 
-# NFPA 1710 2020 edition
+# NFPA 1710
 
 ### 3.3.44.1 Advanced Life Support (ALS).
 
