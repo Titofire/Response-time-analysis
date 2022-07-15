@@ -10,10 +10,10 @@ editor_options:
     wrap: 72
 ---
 
-## SBFD Response Time Analysis of 5 Residental Occupancies
+## SBFD Response Time Analysis of High Frequency Occupancies
 
-This is a look at response time for by Ladder 1 and Engine 2 to six
-occupancies. Data was queried from our records management system for six
+This is a look at response time for by Ladder 1 and Engine 2 to a number of high
+frequency occupancies. Data was queried from our records management system for six
 years between 2021 and 2016. Two separate queries where constructed that
 resulted in "pivot20162021.csv" and "unitresp20102021.csv". Those files
 were joined into a dataframe called "Left_joinedpivotresp.df".
@@ -21,8 +21,8 @@ were joined into a dataframe called "Left_joinedpivotresp.df".
 Columns extracted from that dataframe were incident number, address
 data, station, apparatus responding and response time in seconds. Those
 columns were then filtered for all calls for 90 Allen road, 20
-Harborview, 310 Market, 1510/1530 Williston Rd and 465 Quarry Hill,
-resulting in 3301 rows of the six variables. A summary of reponses to
+Harborview, 1510/1530 Williston Rd and 465 Quarry Hill,
+resulting in 2945 rows of the six variables. A summary of reponses to
 each address by Ladder 1 and Engine 2 are broken out below.
 
 *Responses by Engine 1 and Engine 3 are omitted due to contaminated
@@ -178,6 +178,15 @@ Allen_engine2.df <- Frequent_healthcare.df %>%
                         summary(Allen_engine2.df$resp)
 ```
 
+#### Ambulance summary (396 calls)
+
+```{r}
+Allen_ambulance.df <- Frequent_healthcare.df %>% 
+                       filter(number %in% c("90"), street %in% c("Allen"), unit_desc %in% c("Ambulance 1", "Ambulance 2"))
+                        summary(Allen_ambulance.df$resp)
+```
+
+
 ```{r, figures-Allen, fig.show="hold", out.width="50%"}
 Allen_ladder1.df %>%
                                 ggplot(aes(resp)) +
@@ -202,7 +211,17 @@ Allen_engine2.df %>%
                                 xlab("Seconds") +
                                 ylab("Frequency")
 
-                       
+Allen_ambulance.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#e88b10", color="#975ead", alpha=0.7, bw=30) +
+                                
+                                ggtitle("Ambulance response to 90 Allen rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                geom_vline(xintercept = mean(Allen_ambulance.df$resp), linetype ="dashed", size = .5) + 
+                                geom_vline(xintercept = median(Allen_ambulance.df$resp), linetype ="dotdash", size = .75) + 
+                                scale_y_continuous(labels = NULL) +
+                                xlab("Seconds") +
+                                ylab("Frequency")                       
                        
 ```
 
