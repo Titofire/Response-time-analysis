@@ -14,11 +14,11 @@
                 
                         Left_joinedpivotresp.df <- left_join(Pivot_Table_2016_2021.df,Unitresp20102021.df, by = "inci_no")
                         
-####   Build new data frame and filter for 465 Quarryhill, 90 Allen road, 1510-1530 Williston, 20 Harborview ####
+####   Build new data frame and filter for 465 Quarry Hill, 90 Allen road, 1510-1530 Williston, 20 Harborview ####
         
                 Frequent_healthcare.df <- Left_joinedpivotresp.df %>%
                         select(inci_no,station,number,street,resp,unit_desc) %>%
-                        filter(number %in% c("90","20","1510","465","310","1530"),street %in% c("Williston","Quarryhill", "Allen", "Anderson","Harborview","Market"))
+                        filter(number %in% c("90","20","1510","465","310","1530"),street %in% c("Williston","Quarry Hill","Quarry Hill Road", "Allen", "Anderson","Harborview","Market"))
                 
         ## Now build discrete data frames for each occupancy and explore by apparatus and build box plot graphs ##
                 
@@ -28,13 +28,26 @@
                        filter(number %in% c("1510","1530"), street %in% c("Williston"), unit_desc %in% c("Ladder 1"))
                         summary(Gazebo_ladder1.df$resp)
                         
-                        hist(Gazebo_ladder1.df$resp, breaks = 15, main = "Ladder 1 respones to 1510 / 1530 Williston rd",xlab = "Seconds")
-                        abline(v=c(mean(Gazebo_ladder1.df$resp),median(Gazebo_ladder1.df$resp)),lty=c(2,3),lwd=2)
-                        legend("topright",legend = c("mean","median"),lty=c(2,3),lwd = 2)
+                       
+                                
+                        hist(Gazebo_ladder1.df$resp, breaks = 10, main = "Ladder 1 respones to 1510 / 1530 Williston rd",xlab = "Seconds")
+                                abline(v=c(mean(Gazebo_ladder1.df$resp),median(Gazebo_ladder1.df$resp)),lty=c(2,3),lwd=2)
+                                abline(v=300,lty=4,col = "red",lwd=2)
+                                legend("topright",legend = c("mean","median","NFPA 1710"),col = c("black","black","red"),lty=c(2,3,4),lwd = 2)
                        
                         boxplot(Gazebo_ladder1.df$resp,main="Ladder 1 response to 1510 or 1530 Williston rd.",xlab = "", ylab = "Seconds")
-                        abline(h=c(300),col="red",lty=4, lwd=2)
+                                abline(h=c(300),col="red",lty=4, lwd=2)
                         
+                        Gazebo_ladder1.df %>%
+                                ggplot(aes(resp)) +
+                                geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7, bw=30) +
+                                ggtitle("Ladder 1 Response to 1510/1530 Williston rd.") +
+                                geom_vline(xintercept = 300, linetype="dashed", color = "red", size=1) +
+                                xlab("Seconds") +
+                                ylab("")
+                                
+                                
+                                
                         
                 ## 1510 and 1530 Williston Rd., Engine2 responses (Gazebo_engine2.df) ##
                 
