@@ -186,6 +186,15 @@ Allen_ambulance.df <- Frequent_healthcare.df %>%
                         summary(Allen_ambulance.df$resp)
 ```
 
+```{r}
+#### Inner join ambulance and E2 df's for comparision ####
+
+injoinedAllen_.df <- inner_join(Allen_ambulance.df,Allen_engine2.df,"inci_no")
+#### add column that shows who is last arriving or "None" if arrived at same time.
+injoinedAllen_.df$lastarriving <- ifelse(injoinedAllen_.df$resp.x > injoinedAllen_.df$resp.y, "Ambo", ifelse(injoinedAllen_.df$resp.x < injoinedAllen_.df$resp.y, "E2", "None"))
+```
+
+
 
 ```{r, figures-Allen, fig.show="hold", out.width="50%"}
 Allen_ladder1.df %>%
@@ -272,7 +281,7 @@ Tilley_engine2.df %>%
 
 Emergency medical treatment beyond basic life support that provides for
 advanced airway management including intubation, advanced cardiac
-monitoring, defibrillation, establishment and maintenance of intravenous
+monitoring, defibrillator, establishment and maintenance of intravenous
 access, and drug therapy.
 
 ### 3.3.44.2 \* Basic Life Support (BLS).
